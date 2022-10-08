@@ -1,0 +1,46 @@
+app-id: org.bytedance.Feishu
+runtime: org.freedesktop.Platform
+runtime-version: '21.08'
+sdk: org.freedesktop.Sdk
+command: org.bytedance.Feishu
+modules:
+  - name: Feishu
+    buildsystem: simple
+    build-commands:
+
+      - install -d /app/opt/bytedance/feishu
+      - cp -r opt/bytedance/feishu /app/opt/bytedance
+
+      - install -D
+          org.bytedance.Feishu
+          /app/bin/org.bytedance.Feishu
+
+      - install -d /app/share/applications
+      - sed
+          -e 's/^Exec=.*$/Exec=org.bytedance.Feishu/'
+          -e 's/^Icon=.*$/Icon=org.bytedance.Feishu/'
+          usr/share/applications/bytedance-feishu.desktop
+          >> /app/share/applications/org.bytedance.Feishu.desktop
+
+      - install -D
+          /app/opt/bytedance/feishu/product_logo_128.png
+          /app/share/icons/hicolor/32x32/apps/org.bytedance.Feishu.png
+
+      - install -d /app/share/metainfo
+      - sed -e
+          's/bytedance-feishu\.desktop/org.bytedance.Feishu.desktop/'
+          usr/share/appdata/bytedance-feishu.appdata.xml
+          >> /app/share/metainfo/org.bytedance.Feishu.metainfo.xml
+
+      - install -d /app/extra/export/share/menu
+      - sed
+          -e 's/bytedance-feishu-stable/org.bytedance.Feishu/'
+          -e 's/opt\/bytedance/app\/opt\/bytedance/g'
+          usr/share/menu/bytedance-feishu.menu
+          >> /app/extra/export/share/menu/org.bytedance.Feishu.menu
+
+    sources:
+      - type: dir
+        path: Feishu
+      - type: file
+        path: org.bytedance.Feishu

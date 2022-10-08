@@ -1,0 +1,79 @@
+version: '3'
+
+vars:
+  Feishu_version: 5.14.14
+  os_arch: linux_x64
+  deb_file: Feishu-{{.os_arch}}-{{.Feishu_version}}.deb
+  flat_id: org.bytedance.Feishu
+
+tasks:
+
+  default:
+
+    cmds:
+      - echo 'Hello World from Task!'
+    silent: true
+  
+  clean-deb:
+
+    cmds:
+
+      - rm -rf {{.deb_file}}
+
+  clean-source:
+  
+    cmds:
+
+      - rm -rf Feishu
+
+  dpkg-deb-x:
+
+    cmds:
+
+      - dpkg-deb -x {{.deb_file}} Feishu
+
+  clean-build:
+  
+    cmds:
+
+      - rm -rf .flatpak-builder
+      - rm -rf build-dir
+
+  build:
+
+    deps:
+      - clean-build
+
+    cmds:
+      - flatpak-builder
+          --user --install
+          --force-clean
+          build-dir
+          {{.flat_id}}.yml
+
+  run:
+
+    cmds:
+
+      # -v
+      - flatpak run
+          --share=network
+          --socket=pulseaudio
+          --socket=x11
+          --socket=fallback-x11
+          --share=ipc
+          --socket=x11
+          --device=dri
+          --talk-name=org.gtk.vfs.*
+          --filesystem=xdg-run/gvfsd
+          --filesystem=xdg-run/dconf
+          --filesystem=~/.config/dconf:ro
+          --talk-name=ca.desrt.dconf
+          --env=DCONF_USER_CONFIG_DIR=.config/dconf
+          {{.flat_id}}
+
+  clean-all:
+
+    deps:
+      - clean-source
+      - clean-build
