@@ -2,6 +2,11 @@
 
 - packer: footearth@gmail.com
 
+## deps
+
+- dpkg-deb
+- Flatseal
+
 ## DONE
 
 - Feishu: org.bytedance.feishu
